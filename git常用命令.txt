@@ -1,0 +1,35 @@
+git init 创建本地库
+git clone 'url' 拷贝远程库
+git reset --hard HEAD      # 将当前版本重置为HEAD（通常用于merge失败回退）
+git status --查看分支状态
+
+
+--本地提交
+git add file 跟踪单个文件或文件夹
+git add .  跟踪所有改动文件
+git commit -m "提交说明"  --提交所有更新过的文件
+git log 查看提交历史
+
+--分支
+git branch -a  显示所有分支 --*为当前分支 绿色为本地分支 红色为远程分支
+git branch liudiao3  --创建本地新分支git
+git checkout liudiao3  --切换到分支流调3
+git branch -d liudiao3  --删除分支流调3
+
+--链接远程库
+git remote add origin https://github.com/yblysyl/liudiao.git  --添加远程版本库
+ git remote rm origin --删除已连接远程版本库
+git push origin devbranch --上传本devbranch分支到库origin的  devbranch分支
+git push -u origin master  --将本地分支设置为远程分支（创建并上传远程分支）
+git push origin localBranchName:remoteBranchName  --将本地分支localBranchName推送到远程分支remoteBranchName
+
+
+--分支合并
+git merge origin/master           # 合并远程master分支至当前分支
+git pull origin master                # 获取远程分支master并merge到当前分支
+
+
+--其他参考
+详细版本git使用 请参考：https://www.runoob.com/note/56524
+如果仍不满足请使用： git -h
+
