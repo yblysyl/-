@@ -1,35 +1,70 @@
+​
 git init 创建本地库
 git clone 'url' 拷贝远程库
-git reset --hard HEAD      # 将当前版本重置为HEAD（通常用于merge失败回退）
+git reset --hard HEAD      # 将当前版本重置为HEAD（通常用于merge失败回退）
 git status --查看分支状态
 
 
 --本地提交
 git add file 跟踪单个文件或文件夹
-git add .  跟踪所有改动文件
-git commit -m "提交说明"  --提交所有更新过的文件
+git add .  跟踪所有改动文件
+git commit -m "提交说明"  --提交所有更新过的文件
 git log 查看提交历史
 
 --分支
-git branch -a  显示所有分支 --*为当前分支 绿色为本地分支 红色为远程分支
-git branch liudiao3  --创建本地新分支git
-git checkout liudiao3  --切换到分支流调3
-git branch -d liudiao3  --删除分支流调3
+git branch -a  显示所有分支 --*为当前分支 绿色为本地分支 红色为远程分支
+git branch liudiao3  --创建本地新分支git
+git switch liudiao2 --切换到流调2
+git switch -c liudiao2 --切换到流调2  创建并切换到流调2
+git checkout liudiao3  --切换到分支流调3
+git branch -d liudiao3  --删除分支流调3
+
+
+git push origin --delete 远程分支名     删除远程分支
+git push origin :远程分支  推送空分支到远程（删除远程分支另一种实现）
 
 --链接远程库
-git remote add origin https://github.com/yblysyl/liudiao.git  --添加远程版本库
- git remote rm origin --删除已连接远程版本库
-git push origin devbranch --上传本devbranch分支到库origin的  devbranch分支
-git push -u origin master  --将本地分支设置为远程分支（创建并上传远程分支）
-git push origin localBranchName:remoteBranchName  --将本地分支localBranchName推送到远程分支remoteBranchName
+git remote add origin https://github.com/yblysyl/liudiao.git  --添加远程版本库
+git push origin devbranch --上传本devbranch分支到库origin的  devbranch分支
+git push -u origin master  --将本地分支设置为远程分支（创建并上传远程分支）
+git push origin localBranchName:remoteBranchName  --将本地分支localBranchName推送到远程分支remoteBranchName
+
+--标签
+
+git tag --展示所有标签
+git tag test   --在当前分支的最新提交上打标签
+git push origin 标签名   --推送某个变迁到远程仓库
+git tag v0.2.0 -light --创建轻量标签不需要传递参数
+git tag -a v0.1.0 -m "release 0.1.0 version" --创建附注标签时
+git show v0.1.0  --查看标签版本信息
+git checkout [tagname]  --切换标签后处于一个空的分支上
+git tag -d v0.1.2 --删除标签
+git tag -a v0.1.0 49e0cd22f6bd9510fe65084e023d9c4316b446a6   --给指定的commit打标签
+git push origin v0.1.0 将v0.1.0标签提交到git服务器
+git push origin –tags 将本地所有标签一次性提交到git服务器
 
 
 --分支合并
-git merge origin/master           # 合并远程master分支至当前分支
-git pull origin master                # 获取远程分支master并merge到当前分支
+git merge origin/master           # 合并远程master分支至当前分支 也可合并本地分支
+git pull origin master                # 获取远程分支master并merge到当前分支
+
+--版本切换 
+git checkout 20c1eefdd4d614bbfa91887f229834c9f4ef5706  --切换到该次提交
+git reset --hard HEAD~n ：只能后退，n表示后退n个版
+git reset --hard [索引值]  --切换到索引值所在版本 配合 git reflog使用
+git fetch --all &&  git reset --hard origin/master && git pull   强制覆盖本地版本为远程版本库。（仍保留本地版本的版本信息）
 
 
+注：
+git commit 和git tag -a v0.1.0 都会进入message页面 ；使用方式和vim差不多 ，i 输入模式 esc命令模式 ，命令模式下 :wq退出
+
+--一般个人使用以上就足够了。
+
+下边是我自己的一个常用代码备份库：
+
+yblysyl/codeCollection: 将常用的一些命令和代码做一个汇总，供日常使用 (github.com)
 --其他参考
 详细版本git使用 请参考：https://www.runoob.com/note/56524
-如果仍不满足请使用： git -h
+如果仍不满足且具备一定开发经验请使用： git -h
 
+​
