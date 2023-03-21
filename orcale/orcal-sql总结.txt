@@ -1,0 +1,91 @@
+TO_CHAR()函数返回以指定格式表示的字符串
+ TO_CHAR(sysdate,' "今天" day-Mon-YYYY')  参数一可输入时间 参数二输入时间格式可用引号添加字符串
+SYS_GUID ()函数 生成guid唯一
+参考链接：https://blog.csdn.net/uotail/article/details/83150030
+
+连接：  
+	表1 inner |left |right join  表2  内，左，右连接
+
+
+
+NVL（表达式1，表达式2）
+如果表达式1为空值，NVL返回值为表达式2的值，否则返回表达式1的值。 该函数的目的是把一个空值（null）转换成一个实际的值。其表达式的值可以是数字型、字符型和日期型。但是表达式1和表达式2的数据类型必须为同一个类型。
+
+保留小数：
+ROUND(A/B,2)四舍五入 TRUNC(A/B,2)非四舍五入  TO_CHAR(A/B,‘FM99990.99’) eg:select to_char(data,'9999999990.99') from dual,  注意model是‘9999999990.99’  ，小数点前面还有一个0,否则data是0的时候就会显示  .00  而不是0.00
+格式化官方文档：https://docs.oracle.com/cd/B19306_01/server.102/b14200/sql_elements004.htm
+
+Oracle中的条件语句 case when then及decode。 decode常与sign()函数联用  sign('参数')根据某个值是0、正数还是负数，分别返回0、1、-1，
+DECODE(value,if1,then1,if2,then2,if3,then3,...,else)
+eg:SELECT CREATE_DATE,APPID ,decode(APPID,'SERVER3','YES','NO') ts FROM "INTERCHANGE_MESSAGE" 
+– 写法一： 
+case（条件） 
+when 值1 then 返回值1 
+when 值2 then 返回值2 
+else 缺省值
+– 写法二： 
+case when 条件1 then 返回值1 
+when 条件2 then 返回值2 
+else 缺省值 
+end;
+参考链接：https://blog.csdn.net/sumjob/article/details/103440340
+
+
+Java计算两个日期相差的月数
+        String text1 = "2020-08-02";
+        Temporal temporal1 = LocalDate.parse(text1);
+        String text2 = "2020-09-01";
+        Temporal temporal2 = LocalDate.parse(text2);
+        // 方法返回为相差月份
+        long l = ChronoUnit.MONTHS.between(temporal1, temporal2);
+        System.out.println(l);
+参考链接：https://blog.csdn.net/Bii_yu/article/details/82868637
+
+
+
+NULL: 参考链接：https://blog.csdn.net/qq_34745941/article/details/85085866
+1. null 的意义
+   (1) 表示 '未知' 或 '没有任何意义'
+   (2) null 等同于 '' -- 请注意，'' 之间不能含有空格！
+       
+2. null 比较
+   (1) 不能进行 '值比较'： =、<>  -- 无返回结果
+   (2) 只能进行 '逻辑比较'：is null、is not null、exists、not exists
+   
+3. null 计算
+   (1) 计算规则：null + 任何数 = null
+   (2) null 计算时，建议先判空，如：nvl、nvl2、decode
+
+
+oracle查询字段结果字符串拼接 ：参考链接：https://blog.csdn.net/flyxiaokang/article/details/77583254
+（1） || 连接符  select a || '-' || b || '-' || c  result  from tbName
+（2）CONCAT函数   select concat(concat(concat(contact(a,'-'),b),'-'),c) result from tbName
+
+oracle 两个时间相减 ：参考链接：https://blog.csdn.net/redarmy_chen/article/details/7351410
+1、MONTHS_BETWEEN(date2,date1)
+给出date2-date1的月份
+select months_between('19-12月-1999','19-3月-1999') mon_between from dual;
+--获取两时间月份差
+2、select (EXTRACT(year FROM to_date('2009-05-01','yyyy-mm-dd')) - EXTRACT(year FROM to_date('2008-04-30','yyyy-mm-dd'))) * 12 +
+       EXTRACT(month FROM to_date('2008-05-01','yyyy-mm-dd')) - EXTRACT(month FROM to_date('2008-04-30','yyyy-mm-dd')) months
+from dual;
+--获取两时间年份差
+select EXTRACT(year FROM to_date('2009-05-01','yyyy-mm-dd')) - EXTRACT(year FROM to_date('2008-04-30','yyyy-mm-dd')) years from dual;
+
+orcal 时间详解 格式类型，转换，函数。
+参考链接：https://blog.csdn.net/qq_39314932/article/details/107699664
+
+
+orcal 执行顺序执行逻辑详解
+https://blog.csdn.net/u013615806/article/details/52404327
+  
+
+
+
+
+
+
+
+
+
+

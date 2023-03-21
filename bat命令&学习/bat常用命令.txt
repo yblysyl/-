@@ -1,0 +1,77 @@
+echo "Hello,My First Bat."   rem 输出字符串
+@echo off  
+call a.txt 运行启动 rem:本命令用于调用外部bat文件
+rem 注释
+cd   rem： 切换目录 chdir的简写
+pause rem:暂停
+choice rem:choice 使用此命令可以让用户输入一个字符。用法 choice /?查看用法
+	eg：
+	choice /c 12 /N /M 1exit;2shutdown
+	if errorlevel 2  goto shutdd 
+	if errorlevel 1 goto enddd 
+goto rem:指定跳转到标签，找到标签后，程序将处理从下一行开始的命令   
+if {%2}=={} goto noparms（如果这里的if、%1、%2你不明白的话，先跳过去，后面会有详细的解释。） 
+:noparms 
+
+ if “参数” == “字符串” 　待执行的命令
+if exist 文件名　待执行的命令    rem:如果有指定的文件，则条件成立，运行命令，否则运行下一句。
+if errorlevel / if not errorlevel 数字 待执行的命令	rem:如果返回码等于指定的数字，则条件成立，运行命令，否则运行下一句。if errorlevel 2 goto x2 　
+
+for /L %%c in (1,1,20) do       rem:for循环  for/? 查看用法   eg: FOR %variable IN (set) DO command [command-parameters]
+单词结束和中止循环 用 goto + 标签 实现
+
+
+
+批处理文件中使用参数
+系统参数
+%SystemRoot%   ===    C:\WINDOWS    (%windir% 同样)
+%ProgramFiles% ===    C:\Program Files
+%USERPROFILE%  ===    C:\Documents and Settings\Administrator  (子目录有“桌面”,“开始菜单”,“收藏夹”等)
+%APPDATA%      ===    C:\Documents and Settings\Administrator\Application Data
+%TEMP%         ===    C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp  (%TEM% 同样)
+%APPDATA%      ===    C:\Documents and Settings\Administrator\Application Data
+%OS%           ===    Windows_NT (系统)
+%Path%         ===    %SystemRoot%\system32;%SystemRoot%;%SystemRoot%\System32\Wbem  (原本的设置)
+%HOMEDRIVE%    ===    C:   (系统盘)
+%HOMEPATH%     ===    \Documents and Settings\Administrator 
+枚举当前的环境变量
+setlocal enabledelayedexpansion
+FOR /F "usebackq delims==" %%i IN (`set`) DO @echo %%i    !%%i!
+
+
+
+其他命令
+ping IP地址或主机名 [-t] [-a] [-n count] [-l size]  rem:查看用法 ping /?  测试网络联接状况以及信息包发送和接收状况。但是不能够测试端口。
+telnet 命令	rem：测试端口使用 telnet IP地址或主机名 端口，使用tcp协议的	Sample: telnet 192.168.0.1 80 (测试192.168.0.1的80端口)
+color 命令		rem：设置背景及字体颜色		语法： color bf   rem:b 是指定背景色的十六进制数字； f 指定前景颜色(即字体颜色)。颜色值: 0:黑色 1:蓝色 2:绿色 3:湖蓝 4:红色 5:紫色 6:黄色 7:白色 8:灰色 9:淡蓝 A:淡绿 B:浅绿 C:淡红 D:淡紫 E:淡黄 F:亮白
+
+random 命令	rem:产生随机数(正整数0~)
+exit 命令		rem:结束程序。即时是被调用的程序，结束后也不会返回原程序
+shutdown命令	shutdown -s 关机
+
+内置命令的帮助信息
+ver /?
+cmd /?
+set /?
+rem /?
+if /?
+echo /?
+goto /?
+for /?
+shift /?
+call /?
+其他需要的常用命令
+type /?
+find /?
+findstr /?
+copy /?
+
+
+
+字符串处理
+%源字符串:~起始值,截取长度% (起始值从0开始；截取长度是可选的，如果省略逗号和截取长度，将会从起始值截取到结尾；截取长度如果是负数，表示截取到倒数第几个。) "%time:~0,5%"
+set a="cbcd1234"	echo %a%    rem 输出结果        
+   set a=%a:1=kk%     rem:替换 字符串
+字符串合并   rem:由于没有直接的字符串合并函数，只能用笨方法了。set str1=%str1%%str2%    (合并 str1 和 str2)
+
+截取字符串时，需要传递参数	直接 echo %args:~%num%,-5% 没办法想要的字符串，需要如下两步

@@ -1,0 +1,9 @@
+1、本地复制项目
+1.1将项目复制(Ctrl+C)在空白处粘贴这个项目(Ctrl+V).修改所粘贴项目的名称
+1.2修改它的Web Project Setting 可以通过右击这个项目 -->Properties|属性-->Web Project Setting|检索web|deployment-deployment assembly-->修改web context-root值改为项目名 （必改）
+1.3右键项目->小组->断开连接->删除svn源信息
+1.4右键->小组->共享项目->选择|输入url->文件夹名
+
+
+
+

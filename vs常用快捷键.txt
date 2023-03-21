@@ -1,0 +1,41 @@
+1、窗口快捷键
+
+CTRL + TAB 活动窗体切换 
+Ctrl+W,B: 书签窗口 
+Ctrl+D,B: 断点窗口 （breakpoint）
+Ctrl+D,I: 即时窗口 （immediately）
+Ctrl+F: 查找 （Find）	 Ctrl+Shift+F: 全局查找 
+F3: 查找下一个  Shift+F3: 查找上一个 
+
+2、代码快捷键
+
+Ctrl+E,D（ctrl+k,d） 格式化全部代码 ;
+Ctrl+K,C: 注释选定内容 
+Ctrl+K,U: 取消选定注释内容 
+Ctrl+J: 智能提示 
+Ctrl+K,P: 参数信息 
+Ctrl+K,I: 快速查看信息
+ctrl+shift+f10：自动添加using命名空间
+
+3、调试快捷键
+
+F9: 启用/关闭断点
+Ctrl+F9: 停止断点
+Ctrl+Shift+F9: 删除全部断点
+F10: 逐过程
+Ctrl+F10: 运行到光标处
+F11: 逐语句
+
+4、编辑快捷键
+
+Shift+Alt+Enter: 切换全屏编辑
+shift+f12:查找所有引用
+Ctrl+U: 全部变为小写 
+Ctrl+Shift+U: 全部变为大写 
+Ctrl+Shift+V: 剪贴板循环 
+Ctrl+L: 删除当前行 
+Ctrl+E,W: 自动换行 
+Ctrl+G: 转到指定行 
+F12: 转到所调用过程或变量的定义
+两下tab快速补全代码
+ctrl+减号：回退到光标上一次的位置

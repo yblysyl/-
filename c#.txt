@@ -1,0 +1,18 @@
+依托政务报批系统总结：
+项目的一种入手方式是从 index.html入手，一步步定位页面变化
+另一种依照 app_Start/RouterConfig.cs 里关于路由的配置 依托controller和action 和网址快速定位到位置进行修改。
+
+一般后端逻辑在xxxcontroller类里，里边对应的action方法负责与前端页面交互，并返回新的页面  （一般共同放在controller文件夹里）
+一般前端页面在和controller对应目录结构的位置 但在（Views/Pages文件夹中） Share里放一些公用的页面内容，比如页面头页面尾之类的，
+
+前端访问后端见 Url.Action（）的八种重载：  https://www.cnblogs.com/sundh1981/p/10704005.html   或者其他原生访问，url跳转，重定向等
+后端返回前端 详见 ActionResult 详解 ： https://blog.csdn.net/sundna/article/details/91511745  ActionResult为抽象类，放回继承他的子类结果都可以由常见页面、文件、js、json等类型
+
+前端用到的诸多后端数据有多种形式，其中常见的一种是  Razor表达式
+https://learn.microsoft.com/zh-cn/aspnet/core/mvc/views/razor
+
+该项目数据库有自己的model层， 由model对象类，对象与数据路映射类，数据库操作接口和实现类，并用服务接口和实现类调用数据库实现类，在后端action直接调用服务实现类来达到多层封装和过程解耦。
+由数据对象、映射类（继承 PocoMapper<T>）、数据库服务类（ 继承PocoRepository<T>） 这一块具体还不是很底层了解 需学习
+
+
+https://github.com/MoienTajik/AspNetCore-Developer-Roadmap/blob/master/ReadMe.zh-Hans.md

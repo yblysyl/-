@@ -1,0 +1,381 @@
+--插入
+insert into student
+(student_no,STUDENT_NAME,student_age,student_sex,student_score) VALUES
+('001','张三',20,'1',80);
+--修改
+update student set student_age=30 where STUDENT_NAME='张三';
+--数据全部删除(可恢复)
+DELETE from student;
+--数据全部删除(不可恢复)
+TRUNCATE TABLE student;
+--更新-张三的姓名后面加一个单引号，  单引号-可当转义字符
+update student set student_name='张三''' where student_name='张三';
+--字符串的拼接
+'姓名是：'student_name',年龄是：'student_age
+--将一张表复制到另一张表
+create table 新表名称 as select  from 源表名称; --新表不存在
+insert into 目标表 select  from 源表           --新表已存在
+update table_name set B =  A;      --同一张表中，将A字段的值赋给B字段
+insert into 目标表(字段1,字段2,...) select 源表字段1,字段2... from 源表; 
+--将一张表的字段数据插入到另一张表的字段数据中
+
+orcal 执行顺序执行逻辑详解
+https://blog.csdn.net/u013615806/article/details/52404327
+
+
+查询
+--查询所有
+select  from employees; 
+--查询 姓名和薪水，重命名
+select NAME as 姓名 from employees;
+--条件查询
+select  from EMPLOYEES where DATETO_DATE('1999-01-01','yyyy-mm-dd');
+--多条件查询  -AND,OR  
+select  from EMPLOYEES WHERE job_id = 'IT_PROG' and SALARY5000;
+--查询 -(不等于  ！=,)
+select  from EMPLOYEES WHERE job_id != 'IT_PROG';
+--集合范围查询-(某列在某个范围内，可以用in，不在范围内用not in)
+select  from EMPLOYEES WHERE DEPARTMENT_ID in(30,60,100);
+--区间范围查询-BETWEEN 左区间 and 右区间;
+select  from EMPLOYEES WHERE SALARY BETWEEN 4000 and 5000;
+--查询-判断一个列是否为空用is null, is not null
+select  from EMPLOYEES WHERE manager_id is null;
+--字符串拼接后重命名
+select '姓名：'NAME',岗位：'JOB_ID as 基本信息 from employees;
+--模糊查询 like 'J%' %表示出现任意数量的任意字符 _表示出现一个任意字符
+select  from EMPLOYEES where EMAIL like'%EE%'; 
+--exists 检查子查询的结果是否为真，如果为true则执行外面的SQL语句
+--exists不返回数据只返回true 或false
+
+系统函数
+--统计函数：sum(列名) ，avg(列名)，count(列名)个数，min(列名)，max（列名），
+--count列名建议采用唯一约束的列，或者非空的列，count函数会忽略值为空的行。
+select count(employee_id) from employees;
+select count() from employees;--不建议用，解析所有的列，效率低
+--(select部分如果出现了统计函数，select部分就不能出现其他列)
+select  count(employee_id) from employees where department_id=60;
+--avg(列名)，min(列名)，max（列名），
+select   max(salary),min(salary),avg(salary)  from employees;
+--空值处理函数  nvl(列名，参数)--如果列名对应的行为null，就显示右边参数值
+select  first_name,nvl(commission_pct,0)   from employees  ; 
+--decode 函数 decode(参数，值一，结果一，值二，结果二，..，缺省值)缺省可以不要
+select decode(salary,3000,'低收入',5000,'中等''其他')as 档次 from employees; 
+--Count 函数和distinct关键字：distinct去重
+select count(distinct LAST_NAME) from EMPLOYEES;
+select distinct department_id 
+from EMPLOYEES where department_id is not null;
+--sign('参数')根据某个值是0、正数还是负数，分别返回0、1、-1，
+--case条件语句
+case（条件） 
+when 值1 then 返回值1 
+when 值2 then 返回值2 
+else 缺省值
+– 写法二： 
+case when 条件1 then 返回值1 
+when 条件2 then 返回值2 
+else 缺省值 
+end;
+--NULL
+1. null 的意义
+   (1) 表示 '未知' 或 '没有任何意义'
+   (2) null 等同于 '' -- 请注意，'' 之间不能含有空格！
+2. null 比较
+   (1) 不能进行 '值比较'： =、  -- 无返回结果
+   (2) 只能进行 '逻辑比较'：is null、is not null、exists、not exists
+3. null 计算
+   (1) 计算规则：null + 任何数 = null
+   (2) null 计算时，建议先判空，如：nvl、nvl2、decode
+
+日期函数
+--日期转字符串
+select to_char(sysdate,'yyyy-MM-DD')from dual;
+--生成guid唯一
+SYS_GUID ()函数 
+--字符串转日期
+select to_date('19870617','yyyyMMdd')from dual;
+--oracle 两个时间相减
+MONTHS_BETWEEN(date2,date1)--给出date2-date1的月份
+select months_between('19-12月-1999','19-3月-1999') mon_between from dual;
+--两日期直接相减是相差天数
+
+字符串处理
+select trim('    a  b   cd     ')from dual; --去除左右空格
+select ltrim('    a  b   cd     ')from dual;--去除左空格
+select rtrim('    a  b   cd     ')from dual;--去除右空格
+select   instr('oracle wdp','wdp') from dual;
+--instr函数返回要截取的字符串在源字符串中的位置
+
+分组
+--按照department_id进行分组，显示department_id和相同department_id总人数
+select nvl(department_id,0),count() as 数量 
+from EMPLOYEES group by nvl(department_id,0) order by 数量 asc;
+---round(avg(salary),0)
+select nvl(department_id,0),round(avg(salary),0)as 平均工资
+from employees group by nvl(department_id,0)order by 平均工资 desc;
+-- having
+select department_id,round(avg(salary),0) from employees 
+group by department_id having round(avg(salary),0)4000 ;
+
+保留小数
+--ROUND(AB,2)四舍五入
+--TRUNC(AB,2)非四舍五入
+--TO_CHAR(AB,‘FM99990.99’)
+--注意model是‘9999999990.99’，小数点前面还有一个0
+--否则data是0的时候就会显示  .00  而不是0.00
+
+组合查询
+--条件嵌套查询
+select name from EMPLOYEES where salary
+(select avg(salary) from EMPLOYEES where department_id=30)
+and department_id=30;
+--表嵌套查询
+select t.COUNTRY_NAME from (
+select a.COUNTRY_NAME,a.COUNTRY_ID from COUNTRIES a where a.REGION_ID=
+(select b.REGION_ID from REGIONS b where b.REGION_NAME='Europe'))t
+where t.COUNTRY_NAME like'F%';
+--查询出每个部门中，高出本部门平均工资的员工的雇员号和姓名
+select first_name,EMPLOYEE_ID from EMPLOYEES a, 
+(select DEPARTMENT_ID, avg(salary)as pj 
+from EMPLOYEES group by DEPARTMENT_ID)b--每个部门平均工资
+where salaryb.pj and a.DEPARTMENT_ID=b.DEPARTMENT_ID;
+
+序列
+--创建语法
+create sequence 序列名称
+[start with 初始量]
+[increment by 递增量]
+[maxvalue 最大值 nomaxvalue]
+[minvalue 最小值 nominvalue]
+[cycle  nocycle]
+[cache 缓存个数 nocache];
+--例子如下：
+CREATE SEQUENCE  mysequence
+START WITH 1  INCREMENT BY  2
+MINVALUE 10 MAXVALUE 2000;
+--使用序列
+序列名.nextval
+-- 查看用户下定义了哪些序列信息
+SELECT  FROM user_sequences 
+ORDER BY sequence_name;
+--删除序列
+drop sequence 序列名;
+
+索引
+--创建索引index_employees_name 给 first_name
+create index index_employees_name on copy_employees(first_name);
+alter index index_old rename to index_new;--重新命名索引
+alter index index_name coalesce;--合并索引
+alter index index_name rebuild;--重新构造
+drop index index_name; --删除索引
+--查看索引
+select t.INDEX_NAME,--索引名字
+       t.index_type,--索引类型
+       t.TABLESPACE_NAME,--表空间
+       t.status,--状态
+       t.UNIQUENESS--是否唯一索引
+  from all_indexes T 
+  where  t.INDEX_NAME='index_name'; 
+
+
+视图
+create view student_view as select  from STUDENT;
+
+Oracle存储过程
+--创建存储过程语法
+create or replace procedure 存储过程名
+as
+begin
+  ----------------------------
+end;
+注：
+   在存储过程(PROCEDURE)和函数(FUNCTION)中没有区别；
+   在视图(VIEW)中只能用AS不能用IS；
+   在游标(CURSOR)中只能用IS不能用AS。
+--调用存储过程
+        declare --(可省略)
+        begin
+          myDemo01; --在此处也可使用myDemo01();完成存储过程的调用
+        end;
+    --其他方法
+   call myDemo01();--call 存储过程名可完成调用，注意括号不能少
+--带有参数的存储过程
+--in代表输入，out用于输出，参数默认类型是in类型。
+create or replace procedure myDemo04(name out varchar,age in int)
+as
+begin
+    dbms_output.put_line('age='age);
+    select 'ex_sunqi' into name from dual;
+end; --创建
+declare
+   name varchar(10);
+   age int;
+begin
+   myDemo04(name=name,age=25); --调用
+   dbms_output.put_line('name='name); --输出
+end;
+--处理异常
+create or replace procedure myDemo03
+as
+age int;
+begin
+  age=10;
+  dbms_output.put_line(age);
+  --异常
+  exception when others then
+    dbms_output.put_line('error'); --输出error
+end;
+--循环--前100 个数
+declare
+total int=0;
+i int=1;
+begin
+loop
+total=total+i;
+i=i+1;
+exit when i100;
+end loop;
+dbms_output.put_line('和为：'total);
+end;
+--while 循环
+create or replace procedure myDemo5
+as
+  n_count number = 0;
+begin
+  while n_count  5 loop
+    dbms_output.put_line(n_count);
+    n_count = n_count + 1;
+  end loop;
+end;
+--FOR循环
+create or replace procedure myDemo06
+as
+begin
+ FOR USE in (select  from T_USER_INFO) loop
+     if (USE.id3) then
+        dbms_output.put_line(USE.USER_NAME);
+      end if;
+  end loop;
+end;
+--基本增删改查
+create or replace procedure 
+mydemo07(ID in int, user_name in varchar,pssword in varchar)
+as
+begin
+     insert into T_USER_INFO VALUES(ID,user_name,pssword);
+    --UPDATE  T_USER_INFO t SET t.USER_NAME='sunqi' WHERE t.ID=ID ;
+    --DELETE  T_USER_INFO t WHERE t.ID=ID ; 
+    commit; --提交
+end;
+-- if-else语句
+begin
+if score60 and score=0 then
+ dbms_output.put_line('不及格');
+ elsif score=60 and score=100 then
+ dbms_output.put_line('及格');
+ else
+ dbms_output.put_line('输入错误！');
+ end if;
+end;
+
+plsql
+set serveroutput on;
+--设置环境变量serveroutput为打开,使plsql程序能在SQLplus中输出结果
+--plsql程序基本格式--输出hellword
+declare
+begin
+dbms_output.put_line('Hello Oracle!');
+end;
+
+游标
+1. 游标是什么？
+   用来存储多条查询数据的一种数据结构（'结果集'），
+   它有一个 '指针'，从上往下移动（'fetch'），从而能够 '遍历每条记录'
+2. 优缺点
+   (1) 提高 sql '执行效率'
+   (2) 牺牲 '内存'
+--依次在控制台输出所有学生的信息
+--存储过程中使用游标
+declare 
+cursor cc is select  from student;
+--定义航记录的类型     
+record student%rowType;
+begin
+--打开游标
+  open cc;
+--使用游标
+  loop
+--从游标一行一行取记录
+    fetch cc into record;
+    exit when cc%notfound;
+    dbms_output.PUT_LINE('姓名是：'record.STUDENT_name);
+    end loop;
+    --显示游标必须手动关闭
+    if cc%isopen
+    then close cc;
+    end if;
+end;
+--核心：先后顺序 = 先 fetch ... 再 exit when %notfound
+--游标4大属性
+属性            返回值类型		作用
+sql%isopen      布尔型			判断游标是否 '开启'
+sql%found		布尔型			判断游标是否 '获取' 到值
+sql%notfound	布尔型		    判断游标是否'没有获取'到值(用于 退出循环)
+sql%rowcount	整型			'当前' 成功执行的数据行数（非 总记录数）
+显示游标详见参考链接，不常用未摘录。
+
+函数
+create or replace function mtrim(str varchar)
+return varchar
+as
+  v_str varchar(20);
+begin
+  select replace(str,' ','') into v_str from dual;
+  return v_str;
+end;
+--测试
+select mtrim('   a  bc  d    e f    ') from dual;
+
+dual
+--Oracle中的dual表是一个单行单列的虚拟表。
+--Dual表是oracle与数据字典一起自动创建的一个表
+--这个表只有1列：DUMMY，数据类型为VERCHAR2(1)
+--只有一个数据'X', Oracle有内部逻辑保证dual表中永远只有一条数据。
+--主要用来选择系统变量或求一个表达式的值。
+--是Oracle中的一个实际存在的表,任何用户均可读取,常用在没有目标表的Select语句块中
+--查看当前连接用户
+select user from dual;
+--查看当前日期、时间
+select sysdate from dual;
+
+触发器
+create [or replace] tigger 触发器名 触发时间 触发事件
+on 表名
+[for each row]
+begin
+ plsql语句
+end
+--插入触发器
+create or replace trigger t1
+before insert on person for each row
+begin
+  dbms_output.put_line('Hello'NEW.idNEW.name);
+  if NEW.name like 'J%' then
+    RAISE_APPLICATION_ERROR(-20000,'限制写入以J开始的串');
+    --在触发器中，不能写commit或是rollback
+  end if;
+end;
+--同时使用insert,update,delete类型的触发器： 
+create or replace trigger trigger1
+   before insert or update or delete
+   on person
+  declare
+  begin
+    dbms_output.put_line('hello');
+  end;
+--以下都会引发上面的触发器
+set serveroutput on;
+insert into person values(1,'Jack');
+set serveroutput on;
+update person set name='Tom';
+set serveroutput on;
+delete from person;

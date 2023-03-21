@@ -1,0 +1,200 @@
+1、导入spring 
+导入 jar包
+在webroot\web-inf\web.xml  中配置 配置文件 声明spring配置文件所在位置
+<bean>标签属性
+1.1.id属性：名称，id属性值名称任意命名，唯一标识符，用来表示唯一的bean。
+1.2.class属性：对象的类名（包名+类名）。
+1.3.name属性：属性名，功能和id属性是一样的，id属性值不能包含特殊的字符，但是在name属性值里面可以包含特殊字符。
+1.4.property属性：对象的一个属性。
+1.5.scope 属性，其属性值如下：
+（1）singleton：默认值，单例
+（2）prototype：多例
+（3）request：Web 项目中，把创建的对象放到 request 域中
+（4）session：Web 项目中，把创建的对象放到 session 域中
+（5）globalSession：Web 项目中，应用在 Portlet 环境，如果没有 Portlet 环境，则 globalSession 相当于 session
+1.6.value属性：给name所代表的类型进行赋值。
+1.7.ref属性：给name所代表的自定义类型赋值，一般是另外一个bean。
+
+
+2数据库
+配置数据库
+配置sessionFactory  //在练手项目  application Context.xml文件中 有体现  有bean文件交给spring框架来注入
+//SessionFactory就是一个用于创建Hibernate的Session对象的工厂。SessionFactory通常是在应用启动时创建好的，应用程序中的代码用它来获得Session对象。作为一个单个的数据存储，它也是线程安全的，所以多个线程可同时使用同一个SessionFactory。
+Java J2EE应用一般只有一个SessionFactory，服务于客户请求的各线程都通过这个工厂来获得Hibernate的Session实例，这也是为什么SessionFactory接口的实现必须是线程安全的原因。还有，SessionFactory的内部状态包含着同对象关系映射有关的所有元数据，它是不可变的，一旦创建好后就不能对其进行修改了
+配置spring声明式事务 //见练手项目配置文件
+2.1配置事务管理器 <bean>
+2.2配置事务切入点 <aop:config>
+2.3配置事务属性<tx:advice>
+
+3导入struts 
+导入jar包
+ 配置文件structs.xml文件中 配置struts配置文件的位置<include file="struts_config/struts_*.xml" /> 
+
+在spring的配置文件中配置Action 注：Action的scope为prototype
+在struts中配置Action class属性应指向Action在IOC中的id
+
+
+查询：
+eg:BaseActionSupport extends DefaultActionSupport   action的父类，所有web层的业务action都要继承该类BaseActionSupport
+实现查询的相关步骤：不分顺序
+1、spring里有 bean对象
+eg:<bean id="webAdminAction" class="com.zxt.inter.web.AdminAction" scope="prototype" > //scope必须是prototype
+		    <property name="logic" ref="adminLogic" />
+		</bean>     //class指向的类要继承or间接继承自action  
+		//bean有个property属性 eg：<property name="sessionFactory" ref="sessionFactory"></property>  name指向bean对象里的一个属性 该属性为对象。ref为该对象的bean id
+
+2、struts的配置文件里
+eg:<action name="admin_*" class="webAdminAction"  method="{1}">  //class指向string配置里的bean对象id method字段意义为指向的方法为url第一个字段
+       	<result name="login">index.jsp</result>//name对应的字段匹配eg：add方法里的返回值 return “login” 匹配返回页面index
+       </action>
+	\\配置文件中的 <action> 元素主要用于建立 Action 对象的映射，通过 <action> 元素可以指定 Action 请求地址及处理后的映射页面，在 <action> 元素中主要包含如表所示的属性信息。
+		\\name 用于配置Action对象被请求的URL映射 
+		\\class 指定Action对象的类名 
+		\\method 设置请求Action对象时，调用Action对象的哪一个方法 {1}执行通配符后第一个方法
+		\\converter 指定Action对象类型转换器的类 
+
+
+
+在string class指向的com.zxt.inter.web.AdminAction 类里书写业务逻辑  方法名对应url eg：add();
+3、对应的实体类
+对于数据库的处理要写dao层  负责处理查询等 功能  在练手项目中com.zxt.common.impl. CommonOracleDaoImpl 有所体现
+	教程视频中 在dao层处理数据库查询 在service中调用dao层 ，在Action类中调用service
+	在练手项目中对应的Action类方法Login中 调用AdminLogicImpl对象实现service  . 在AdminLogicImpl中调用 CommonOracleDao对象方法来处理dao层  (将数据处理后返回指定页面  （数据传输 保存逻辑（如session request等）还需学习了解）)
+ 
+前端传输的url为：eg:<a href ="admin_add">add</a>  //在Action类中由add方法来处理
+前端接收页面见   尚硅谷ssh要点.doc\前端接收
+
+整个查询的逻辑为    前端传入url   url由struts拦截并指向String配置文件里的类和方法 在方法里调用service层，在service层中调用dao层。具体运用不同的数据库框架和不同的前端ui技术会有不同的方式。
+ 
+删除：逻辑等同查询，但返回结果不同见 ssh要点.doc\删除的返回 
+
+
+AJAX：struts框架下使用AJAX-string版 |json版另附   //ajax返回string数据
+https://struts.apache.org/core-developers/ajax.html
+
+代码如下：链接里也有
+public class TextResult extends ActionSupport  {
+    private InputStream inputStream;
+    public InputStream getInputStream() {
+        return inputStream;
+    }
+
+    public String add() throws Exception {   // 抛出错误原因  getBytes转换字符集出错。
+        inputStream = new ByteArrayInputStream("Hello World! This is a text string response from a Struts 2 Action.".getBytes("UTF-8"));
+        return add;
+    }
+}
+<action name="text-result" class="actions.TextResult">
+    <result type="stream" name="add">
+        <param name="contentType">text/html</param>
+        <param name="inputName">inputStream</param>
+</action>
+
+
+
+
+AJAX传值： 范例 （传JSON）
+nui.parse();
+var form = new mini.Form("form");
+function SaveData() {		
+            var o = form.getData();			
+            $.ajax({
+              	url: "admin_add",
+	type: 'post',
+               	data:{dataValue:mini.encode(o)},  //数据传送
+                cache: false,
+                dataType:"json",
+                success: function (e) {
+                	alert(e);
+                },
+                error: function () {
+                    nui.alert("添加失败+传输错误");
+                  	closeWindow();
+                }
+            });
+
+将ajax传输的字符串解析为对象 教程： //不用这个方法。
+https://blog.csdn.net/weixin_62520626/article/details/122822176
+
+
+//调用工具库对数据进行处理
+
+HashMap map1 = Util.getHashMapForStr(getDataValue());      //该函数返回一个HashMap ：HashMap<String, Object> map1 = JSON.parseObject(strJson, HashMap.class);
+			qry.setMap1(map1);
+			i =  logic.add(qry);
+从qry.map1中取数据  qry.getMap1().get("adminName") 键值对的方式
+
+在项目的service层处理数据使用 调用dao层的update方法 //public int update(String sql,Object[] obj); int标记 1代表成功 0代表失败。
+注：该项目的update方法里具体使用如下处理
+			1、获取连接池 ：	Connection conn = dataSource.getConnection();
+			2sql预处理：	PreparedStatement updateTable = conn.prepareStatement(sql);
+					for (int i = 0;i< obj.length;i++) updateTable.setObject(i+1, obj[i]);
+			3执行语句		iFlag = updateTable.executeUpdate();
+		   	4关闭处理		conn.commit();updateTable.close();conn.close();
+			典型jdbc处理方式
+
+
+sql语句模块
+insert into 表名 (列名1, 列名2, 列名3, ...) values (值1, 值2, 值3, ...);  插入语句
+DELETE FROM 表名称 WHERE 列名称 = 值  删除
+https://www.w3school.com.cn/sql/index.asp sql教程
+
+查询两个表
+SELECT * FROM "CONFIG_DXP"
+
+SELECT CONFIG_DXP_CHANNEL.ID ,CONFIG_DXP_CHANNEL.TRAN_TYPE,CONFIG_DXP.DXP_NAME 
+FROM CONFIG_DXP, CONFIG_DXP_CHANNEL
+WHERE CONFIG_DXP.DXP_ID = CONFIG_DXP_CHANNEL.DXP_ID
+
+SELECT CONFIG_DXP_CHANNEL.ID ,CONFIG_DXP_CHANNEL.TRAN_TYPE,CONFIG_DXP.DXP_NAME
+FROM CONFIG_DXP_CHANNEL
+INNER JOIN CONFIG_DXP
+ON CONFIG_DXP_CHANNEL.DXP_ID = CONFIG_DXP.DXP_ID
+
+
+
+JSON相关：
+1、JSON值为数组是解析： 依据debug查询数据的类型依次寻找数据。
+	HashMap map1 = Util.getHashMapForStr(getDataValue());  将字符串解析为 HashMap  //函数内语句HashMap<String, Object> map1 = JSON.parseObject(strJson, HashMap.class);
+			List str1 =  (List) map1.get("data");      将数组转为list
+			JSONObject str2=  (JSONObject) str1.get(0);  取出list中的第一个 jsonobject对象
+			String str3 = (String) str2.get("POWER_TYPE");  去除json对象的POWER_TYPE对应的值。
+
+
+数据库相关：
+public List<HashMap<String,Object>> queryForList(String sql,Object[] obj) {
+try {
+Connection conn = dataSource.getConnection(); //建立连接
+PreparedStatement queryTable = conn.prepareStatement(sql);
+for (int i = 0; i < obj.length;i++) {queryTable.setObject(i+1, obj[i]);}  //sql语句预处理
+ResultSet rs = queryTable.executeQuery(); //查询结果存入ResultSet集合中
+ResultSetMetaData rsmd = rs.getMetaData();    //  ResultSetMetaData 叫元数据，是数据库 列对象，以列为单位封装为对象。元数据，指的是其包含列名，列值，列类型，列长度等等有用信息。 见教程： https://blog.csdn.net/xueyijin/article/details/121456405
+int colunmCount = rsmd.getColumnCount(); //获取列的个数
+String columnName = rsmd.getColumnName(i);// 获得指定列的列名
+String columnName[] = new String[colunmCount];
+for(int i = 0;i<colunmCount;i++){columnName[i] = rsmd.getColumnName(i+1);}// 获得所有列的列名 放入数组columnName中
+List<HashMap<String,Object>> params = new ArrayList<HashMap<String,Object>>();
+while(rs.next()){
+HashMap<String,Object> map1 = new HashMap<String,Object>();  
+for(int i = 0;i<colunmCount;i++){map1.put(columnName[i], rs.getString(i+1));}  // 将查询到的一行信息以 map的形式存入map1
+		    	params.add(map1);} 添加map到列表当中
+ rs.close(); queryTable.close(); conn.close();  //释放资源
+ return params;
+}catch(Exception e) {e.printStackTrace();log.warn("CommonDaoImpl queryForList : " + e.toString());}异常处理
+return null;
+}
+
+
+http://www.miniui.com/docs/api/index.html     //miniuiapi
+
+http://t.zoukankan.com/liushuijinger-p-3457109.html  //拦截器教程 
+https://www.bilibili.com/medialist/play/watchlater/BV1vZ4y1M7HT    //ssh视频教程链接
+
+
+
+
+获取ip:
+1、先获取request:  HttpServletRequest request = ServletActionContext.getRequest(); 获取request 参考链接：https://blog.csdn.net/iTommy2016/article/details/75144747
+2、获取ip: https://blog.csdn.net/java_zhangshuai/article/details/94032479  (考虑多种代理等可能，大部分兼容)
+
+

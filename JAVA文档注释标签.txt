@@ -1,0 +1,17 @@
+@author  作者
+
+@param  输入参数的名称  说明
+
+@return 输出参数说明
+
+@since JDK版本
+
+@version 版本号
+
+@see 链接目标
+
+@throws 异常
+
+@deprecated 解释
+
+@link 链接地址

@@ -1,0 +1,37 @@
+Dblink(database link)    跨数据库连接      https://blog.csdn.net/whandgdh/article/details/79286848    ||推荐右键 database link模块创建
+定时任务：
+	Oracle 定时任务详解（dbms_job） 全命令：    https://blog.csdn.net/qq_34745941/article/details/99857323
+
+	PLSQL定时任务创建（Oracle数据库dbms_job使用）带实操：  https://blog.csdn.net/qq_40709468/article/details/81876828
+
+
+orcale创建用户： https://blog.csdn.net/wh1236666/article/details/108479327
+
+（一般创建顺序Dblink、存储过程、定时任务）  
+
+
+1、创建dblink ：右键 database link模块创建
+2、创建存储过程：
+create or replace procedure p_sync_149 as
+begin
+delete from admin;
+insert into admin select * from admin@inter149;
+commit;
+exception
+  WHEN OTHERS THEN
+    --p_err := 'p_del_interchange :' || substr(SQLERRM, 1, 255);
+    ROLLBACK;
+end p_sync_149;
+
+3、创建定时任务
+declare
+job binary_integer;
+begin
+  dbms_job.submit(job       => job,
+                  what      => 'p_sync_149 ();',
+                  next_date => sysdate, -- 立即执行
+                  interval  => 'sysdate + 1 / (24 * 60 * 60)' -- 每秒
+                  );
+  -- 记得哦         
+  commit;
+end;
