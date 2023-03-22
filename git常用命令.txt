@@ -66,5 +66,9 @@ yblysyl/codeCollection: 将常用的一些命令和代码做一个汇总，供�
 --其他参考
 详细版本git使用 请参考：https://www.runoob.com/note/56524
 如果仍不满足且具备一定开发经验请使用： git -h
-
+注： usage: git tag [-a | -s | -u <key-id>] [-f] [-m <msg> | -F <file>] [-e]  
+ 
+[]中的是正则表达式一般为与或。<> 指对象类型 
+如：-n[<n>]  可以用 -n5
+-F <file> 用 -f 文件名
 ​
