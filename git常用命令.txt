@@ -25,6 +25,7 @@ git push origin :远程分支  推送空分支到远程（删除远程分支�
 
 --链接远程库
 git remote add origin https://github.com/yblysyl/liudiao.git  --添加远程版本库
+git remote remove origin    --移除origin代表的远程版本库
 git push origin devbranch --上传本devbranch分支到库origin的  devbranch分支
 git push -u origin master  --将本地分支设置为远程分支（创建并上传远程分支）
 git push origin localBranchName:remoteBranchName  --将本地分支localBranchName推送到远程分支remoteBranchName
@@ -32,8 +33,7 @@ git push origin localBranchName:remoteBranchName  --将本地分支localBranchN
 --标签
 
 git tag --展示所有标签
-git tag test   --在当前分支的最新提交上打标签
-git push origin 标签名   --推送某个变迁到远程仓库
+git tag test   --在当前分支的最新提交上打标签test
 git tag v0.2.0 -light --创建轻量标签不需要传递参数
 git tag -a v0.1.0 -m "release 0.1.0 version" --创建附注标签时
 git show v0.1.0  --查看标签版本信息
