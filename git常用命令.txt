@@ -1,5 +1,4 @@
-​
-git init 创建本地库
+​git init 创建本地库
 git clone 'url' 拷贝远程库
 git reset --hard HEAD      # 将当前版本重置为HEAD（通常用于merge失败回退）
 git status --查看分支状态
@@ -10,6 +9,17 @@ git add file 跟踪单个文件或文件夹
 git add .  跟踪所有改动文件
 git commit -m "提交说明"  --提交所有更新过的文件
 git log 查看提交历史
+
+--文件夹管理
+项目的根目录当中创建.gitignore（直接用这个名字即可）。 touch .gitignore
+在.gitignore
+.idea/  忽略掉.idea文件夹
+*.json 忽略掉所有的后缀为json的文件
+以上只能忽略为追踪（add）过的文件
+git rm --cached  文件夹名  --从 Git 的数据库中删除对于该文件的追踪
+git rm -r -f  idea/    --  不判断是否提交直接从本地删除idea文件夹
+
+
 
 --分支
 git branch -a  显示所有分支 --*为当前分支 绿色为本地分支 红色为远程分支
