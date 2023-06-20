@@ -1,0 +1,139 @@
+ /*
+Cron表达式：是一个字符串，由6个或7个空格分隔的时间元素组成，用于指定作业的执行时间。Cron表达式的语法如下：
+秒 分 时 日 月 周 年(可选)
+其中，每个时间元素都是一个数字或一个通配符(*)，表示相应的时间范围或所有可能的值。具体来说：
+
+秒：0-59之间的整数
+分：0-59之间的整数
+时：0-23之间的整数
+日：1-31之间的整数
+月：1-12之间的整数或缩写词(JAN-DEC)
+周：1-7之间的整数或缩写词(SUN-SAT)
+年(可选)：1970-2099之间的整数
+除了数字和通配符，Cron表达式还支持一些特殊字符，例如：
+
+/：表示增量，例如"0/5"表示从0秒开始，每隔5秒执行一次
+,：表示枚举，例如"MON,WED,FRI"表示周一、周三、周五执行
+-：表示范围，例如"10-20"表示从10到20之间的每个整数都会匹配
+?：表示不确定，用于日和周中的一个，例如"0 0 12 ? * WED"表示每个星期三中午12点执行
+
+例子 "0/20 * * * * ?" 每二十秒执行一次   0 0 0,12 * * ?  每日0点和12点执行
+		  */
+
+
+
+
+在使用Quartz Scheduler进行定时任务调度时，有一些常用的设置可以帮助您实现灵活、可靠的任务调度。以下是一些常用的设置：
+
+JobDetail：JobDetail是一个用于描述作业的对象，它包含作业类、作业名称、作业组等信息。您可以使用JobBuilder来创建JobDetail对象，并设置相关属性。
+	以下是一些常用的JobDetail设置和配置：
+		 作业类：您需要指定一个实现了org.quartz.Job接口的作业类。这个类负责实际执行作业逻辑。例如：
+   		JobDetail job = JobBuilder.newJob(MyJob.class).build();
+		作业名称和作业组：每个作业都需要一个唯一的名称和所属的组。您可以使用withIdentity()方法来指定作业名称和组名。例如：
+		 JobDetail job = JobBuilder.newJob(MyJob.class)
+     		  .withIdentity("job1", "group1")
+      		 .build();
+		持久性：如果您希望作业在调度程序重启后仍然存在，可以通过设置JobDetail的持久性来实现。例如：
+			JobDetail job = JobBuilder.newJob(MyJob.class)
+     			  .withIdentity("job1", "group1")
+      			 .storeDurably()
+       			.build();
+
+ JobDataMap：JobDataMap是一个用于保存作业数据的对象。您可以使用withJobData()方法来向JobDataMap中添加数据，然后将其与JobDetail关联。例如：
+
+   ```
+   JobDataMap dataMap = new JobDataMap();
+   dataMap.put("key1", "value1");
+   dataMap.put("key2", "value2");
+   JobDetail job = JobBuilder.newJob(MyJob.class)
+       .withIdentity("job1", "group1")
+       .usingJobData(dataMap)
+       .build();
+   ```
+
+
+
+JobDataMap是Quartz Scheduler中的一个对象，它可以用来存储和传递作业执行时所需的数据。JobDataMap可以包含各种类型的数据，例如字符串、数字、日期、布尔值、集合等等。在JobDetail或Trigger中，您可以使用usingJobData()或usingTriggerData()方法来设置JobDataMap。
+
+在Job类中，您可以使用JobExecutionContext对象来获取JobDataMap。例如，您可以使用以下代码来获取作业中的一些参数：
+
+```
+public class MyJob implements Job {
+    public void execute(JobExecutionContext context) throws JobExecutionException {
+        JobDataMap dataMap = context.getJobDetail().getJobDataMap();
+        String param1 = dataMap.getString("param1");
+        int param2 = dataMap.getInt("param2");
+        // ...
+    }
+}
+```
+
+通过这种方式，您可以将作业执行所需的参数传递给Job类。
+
+关于持久性，Quartz Scheduler中的Job和Trigger可以设置为持久性。如果设置为持久性，那么它们会被保存在调度程序的存储库中，即使调度程序重启也不会丢失。这对于需要长期运行的任务非常有用。如果不设置为持久性，则调度程序重启后将无法找到作业和触发器。
+
+这些设置和配置可以帮助您创建灵活、可重用的作业定义。
+
+2. Trigger：Trigger是一个用于描述触发器的对象，它包含触发器类型、触发器名称、触发器组等信息。您可以使用TriggerBuilder来创建Trigger对象，并设置相关属性。
+CronTrigger
+		 String cronExpression = "0 0 10 * * ?";
+		 CronTrigger cronTrigger = TriggerBuilder.newTrigger()
+		     .withIdentity("trigger1", "group1")
+		     .withSchedule(CronScheduleBuilder.cronSchedule(cronExpression)
+		         // 设置触发器的启动时间为 2023 年 6 月 15 日 10 点
+		         .inTimeZone(TimeZone.getTimeZone("Asia/Shanghai")) //设置时区
+		         .withMisfireHandlingInstructionDoNothing()) // 避免错过任务 错过任务触发时间不再执行等待下一次执行
+//		     withMisfireHandlingInstructionFireAndProceed()//错过触发时间立即执行
+		     // 设置触发器的开始时间为 2023 年 6 月 15 日 10 点
+		     .startAt(new Date(1234567890123L))
+		     // 设置触发器的结束时间为 2023 年 6 月 30 日 10 点
+		     .endAt(new Date(1234567890123L + (15 * 24 * 60 * 60 * 1000L)))
+		     .build();
+
+3. Cron表达式：Cron表达式是一种用于描述时间规则的表达式，它可以指定作业在何时执行。您可以使用CronTrigger来创建基于Cron表达式的触发器。详见Cron表达式。
+
+4. JobDataMap：JobDataMap是一个用于传递作业数据的对象，它可以存储任意类型的数据。您可以使用JobBuilder来设置JobDataMap对象，并在作业执行时获取其中的数据。
+
+5. JobExecutionContext：JobExecutionContext是一个包含作业执行上下文信息的对象，它可以获取作业执行时的各种信息，如JobDetail、Trigger、Scheduler等。
+
+6. JobListener和TriggerListener：JobListener和TriggerListener是用于监听作业和触发器事件的接口，您可以实现这些接口来处理各种事件，如作业开始、作业结束、触发器错过等。
+
+7. SchedulerFactory和Scheduler：SchedulerFactory是用于创建Scheduler对象的工厂类，它可以创建多个Scheduler对象，每个Scheduler对象都可以独立地进行作业调度。Scheduler是一个用于调度作业的对象，它可以启动、停止、暂停、恢复作业调度。
+Scheduler对象
+start()：启动Scheduler对象。
+shutdown()：关闭Scheduler对象。
+scheduleJob(jobDetail, trigger)：安排一个作业和触发器来一起运行。
+deleteJob(jobKey)：删除指定的作业。
+pauseTrigger(triggerKey)：暂停指定的触发器。
+resumeTrigger(triggerKey)：恢复指定的触发器。
+pauseAll() //暂停所有
+resumeAll //回复所有
+
+jobKey = new JobKey("myJob", "group1"); //创建时的名字和组名
+triggerKey = new TriggerKey("myTrigger", "group1");
+
+修改触发器和活动
+// 根据名称和组名获取作业详情
+JobDetail jobDetail = scheduler.getJobDetail(new JobKey("jobName", "groupName"));
+// 修改作业的属性
+jobDetail.getJobDataMap().put("key", "newValue");
+scheduler.addJob(jobDetail, true);//更改作业  true替换已有的 否则抛出异常，false新加入job
+
+//Updating an existing trigger 更新触发器，通过triggerkey获得触发器，重新配置。
+// 根据名称和组名获取触发器
+Trigger trigger = scheduler.getTrigger(new TriggerKey("triggerName", "groupName"));
+// 修改触发器的属性
+trigger.getTriggerBuilder().withSchedule(CronScheduleBuilder.cronSchedule("0 0/5 * * * ?"));
+scheduler.rescheduleJob(trigger.getKey(), trigger);// 更新触发器
+
+// Replacing a trigger 替换触发器，通过triggerkey移除旧的触发器，同时添加一个新的进去。
+ trigger，新构造的触发器
+scheduler.rescheduleJob(new TriggerKey(map.get("triggerName"), map.get("triggerGroup")), trigger);
+
+
+scheduler.scheduleJob(trigger.forJob(jobDetail.getKey()).build());
+scheduleJob(JobDetail, Trigger);
+scheduleJob(Trigger);//加入触发器Tager
+加入触发器，并将其与作业关联并添加到调度程序中
+
+
