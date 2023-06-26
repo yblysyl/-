@@ -102,8 +102,14 @@ CronTrigger
 Scheduler对象
 start()：启动Scheduler对象。
 shutdown()：关闭Scheduler对象。
-scheduleJob(jobDetail, trigger)：安排一个作业和触发器来一起运行。
+scheduleJob(jobDetail, trigger)：安排一个作业和触发器来一起运行。  //新增任务|作业
+
 deleteJob(jobKey)：删除指定的作业。
+//删除作业   //删除作业会删除与作业关联的触发器
+JobKey jobKey = new JobKey("job-name", "job-group");
+scheduler.deleteJob(jobKey);  
+
+
 pauseTrigger(triggerKey)：暂停指定的触发器。
 resumeTrigger(triggerKey)：恢复指定的触发器。
 pauseAll() //暂停所有
@@ -115,25 +121,29 @@ triggerKey = new TriggerKey("myTrigger", "group1");
 修改触发器和活动
 // 根据名称和组名获取作业详情
 JobDetail jobDetail = scheduler.getJobDetail(new JobKey("jobName", "groupName"));
-// 修改作业的属性
+  
+// 修改作业    
 jobDetail.getJobDataMap().put("key", "newValue");
-scheduler.addJob(jobDetail, true);//更改作业  true替换已有的 否则抛出异常，false新加入job
+scheduler.addJob(jobDetail, true);//更改作业  true替换已有的 否则抛出异常，false新加入job    JobDetail绑定了Trigger便无法使用，则先删除后新增
 
-//Updating an existing trigger 更新触发器，通过triggerkey获得触发器，重新配置。
+//Updating an existing trigger 更新触发器，通过triggerkey获得触发器，重新配置。      修改触发器方法一
 // 根据名称和组名获取触发器
 Trigger trigger = scheduler.getTrigger(new TriggerKey("triggerName", "groupName"));
 // 修改触发器的属性
 trigger.getTriggerBuilder().withSchedule(CronScheduleBuilder.cronSchedule("0 0/5 * * * ?"));
 scheduler.rescheduleJob(trigger.getKey(), trigger);// 更新触发器
 
-// Replacing a trigger 替换触发器，通过triggerkey移除旧的触发器，同时添加一个新的进去。
+// Replacing a trigger 替换触发器，通过triggerkey移除旧的触发器，同时添加一个新的进去。  //建议用这个
  trigger，新构造的触发器
-scheduler.rescheduleJob(new TriggerKey(map.get("triggerName"), map.get("triggerGroup")), trigger);
+scheduler.rescheduleJob(new TriggerKey(map.get("triggerName"), map.get("triggerGroup")), trigger);  修改触发器方法二
 
 
 scheduler.scheduleJob(trigger.forJob(jobDetail.getKey()).build());
 scheduleJob(JobDetail, Trigger);
 scheduleJob(Trigger);//加入触发器Tager
 加入触发器，并将其与作业关联并添加到调度程序中
+
+
+
 
 
